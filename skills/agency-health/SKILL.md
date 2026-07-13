@@ -25,12 +25,14 @@ names a target lane, reason, case id, turn reference, and ledger id-stub.
 
 ## Read model
 
-Bind `registry:runx/data-store@0.1.2` to the supplied `store_id` and call
-`read_projection` using the agency case as the domain key. Fold events strictly
+The graph composes the catalog data-store `read_projection` runner (published as
+`registry:runx/data-store@0.1.2`) using the supplied `store_id` and agency case
+as the domain key. Fold events strictly
 in projection version order. Separately call the ledger read runner (C7) for
 cross-run seal and refusal aggregates. Ledger evidence is audit-only and enters
 the bundle only as receipt id-stubs; it must never replace the domain-keyed case
-projection.
+projection. The graph separately composes `ledger.read` with chain proof and
+passes only its receipt-id-stub answer into the health analyst.
 
 Grade `seal_rate`, `stuck_case_count`, `cap_usage_pct`, and
 `escalation_backlog`. A supplied baseline may tighten declared norms but cannot

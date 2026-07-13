@@ -10,6 +10,8 @@ catalog:
 harness:
   cases:
     - name: concerning-agency-sealed
+      env:
+        RUNX_DATA_SOURCES: '{"data_sources":{"tenant://agency-ops/projection":{"adapter":"data.sqlite","database_path":".runx/data/agency-health-concerning.sqlite","resources":{"agency_cases":{"kind":"event_stream","partition_key":"aggregate_id"}}}}}'
       inputs:
         data_source_ref: tenant://agency-ops/projection
         store_id: agency-ops-primary
@@ -34,6 +36,8 @@ harness:
       expect: {status: sealed, receipt: {schema: runx.receipt.v1}}
 
     - name: no-case-events-stop
+      env:
+        RUNX_DATA_SOURCES: '{"data_sources":{"tenant://agency-ops/empty-projection":{"adapter":"data.sqlite","database_path":".runx/data/agency-health-empty.sqlite","resources":{"agency_cases":{"kind":"event_stream","partition_key":"aggregate_id"}}}}}'
       inputs:
         data_source_ref: tenant://agency-ops/empty-projection
         store_id: agency-ops-primary
@@ -63,6 +67,23 @@ runners:
     graph:
       name: agency-health
       steps:
+        - id: read-case-projection
+          skill: ../data-store
+          runner: read_projection
+          inputs:
+            data_source_ref: "$input.data_source_ref"
+            store_id: "$input.store_id"
+            resource: agency_cases
+            aggregate_id: "$input.case_id"
+        - id: read-ledger-aggregates
+          skill: ../ledger
+          runner: read
+          inputs:
+            question: Read seal-rate and refusal-spike aggregates for this agency period; return receipt id-stubs only.
+            filter:
+              skill_ref: "$input.agency_ref"
+              time_range: "$input.period"
+            proof: {verify_chain: true}
         - id: assemble-health
           run:
             type: agent-task
@@ -76,4 +97,7 @@ runners:
             period: "$input.period"
             case_id: "$input.case_id"
             health_baseline: "$input.health_baseline"
+          context:
+            ordered_case_projection: read-case-projection.data_operation_result.data.projection
+            ledger_id_stub_aggregates: read-ledger-aggregates.ledger_answer_packet.data
           artifacts: {wrap_as: agency_health_bundle, packet: runx.agency.health.v1}

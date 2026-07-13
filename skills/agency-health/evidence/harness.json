@@ -9,6 +9,6 @@
     {"name": "concerning-agency-sealed", "status": "sealed", "decision": "ready", "health_status": "degraded"},
     {"name": "no-case-events-stop", "status": "sealed", "decision": "needs_more_evidence", "findings": 0, "interventions": 0}
   ],
-  "receipt_ids": ["sha256:1042d15c5acf2df74e3b816fe51613daecb7cb3c0cc98ca5d6865efd349fcaa1", "sha256:502632467341ccfc8f7d9d5722d15c7fa3667d3f780ac18d82dc2888b3711945"],
+  "receipt_ids": ["sha256:b11e7d247523cffe31b7a3c38fb690dd6553dadc0f34531522184a1c3e428429", "sha256:e554ace342b9f2a2fcd0430f63fc6663f7a9be3f587260e690a435e23f2e26ce"],
   "graph_case_count": 2
 }
