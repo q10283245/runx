@@ -1,0 +1,10 @@
+{
+  "schema": "runx.agency.case_trail.verification.v1",
+  "kid": "renewal-agency-trail",
+  "public_key_base64": "O2onvM62pC1io6jQKm8Nc2UyFXcd4kOmOsBIoYtZ2ik=",
+  "verdicts": [
+    {"receipt_id": "sha256:c89825c9d271389028367a8162ee9ebce0ff9739e4a114fe58b57ac2a52dd1b7", "valid": true, "digest": "valid", "content_address": "valid", "signature": "valid"},
+    {"receipt_id": "sha256:d8ea964534a047b438dd0b44ee3430b76757d82089b80b67e83e9f4f070dbe1a", "valid": true, "digest": "valid", "content_address": "valid", "signature": "valid"},
+    {"receipt_id": "sha256:f4878a95993c1b5faeb2e70f20c71c1ccd22fc0d0cda1952b9d005d7e7ea9042", "valid": true, "digest": "valid", "content_address": "valid", "signature": "valid"}
+  ]
+}

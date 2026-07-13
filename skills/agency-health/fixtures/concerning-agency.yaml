@@ -1,0 +1,5 @@
+case: concerning-agency-sealed
+expected_decision: ready
+expected_health_status: degraded
+expected_metrics: [seal_rate, stuck_case_count, cap_usage_pct, escalation_backlog]
+expected_lanes: [policy-author, improve-skill]

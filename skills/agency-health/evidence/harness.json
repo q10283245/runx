@@ -1,0 +1,14 @@
+{
+  "runx_version": "runx-cli 0.7.0",
+  "command": "runx harness skills/agency-health --json",
+  "status": "passed",
+  "case_count": 2,
+  "assertion_error_count": 0,
+  "case_names": ["concerning-agency-sealed", "no-case-events-stop"],
+  "case_results": [
+    {"name": "concerning-agency-sealed", "status": "sealed", "decision": "ready", "health_status": "degraded"},
+    {"name": "no-case-events-stop", "status": "sealed", "decision": "needs_more_evidence", "findings": 0, "interventions": 0}
+  ],
+  "receipt_ids": ["sha256:1042d15c5acf2df74e3b816fe51613daecb7cb3c0cc98ca5d6865efd349fcaa1", "sha256:502632467341ccfc8f7d9d5722d15c7fa3667d3f780ac18d82dc2888b3711945"],
+  "graph_case_count": 2
+}

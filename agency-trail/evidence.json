@@ -1,0 +1,27 @@
+{
+  "schema": "runx.agency.case_trail.evidence.v1",
+  "summary": "A real three-turn standing-agency trail for the recurring two-week bounty operations mandate, including one consequence gate and its resolution.",
+  "runx_version": "runx-cli 0.7.0",
+  "agency_ref": "agency:renewal-runner",
+  "case_id": "case:two-week-200-bounty-ops",
+  "mandate": "Advance compliant open-source bounty work toward USD 200 without spending money, signing wallet transactions, exposing credentials, or widening authority.",
+  "roster": [
+    {"role": "researcher", "skill": "agency-health", "scope": ["public-read", "bounty-triage"]},
+    {"role": "implementer", "skill": "issue-to-pr", "scope": ["workspace-write", "github-draft-pr"]},
+    {"role": "verifier", "skill": "receipt-auditor", "scope": ["receipt-read", "public-evidence"]}
+  ],
+  "turns": [
+    {"turn": 1, "status": "advanced", "move": "dispatch researcher", "receipt_ref": "runx:receipt:sha256:c89825c9d271389028367a8162ee9ebce0ff9739e4a114fe58b57ac2a52dd1b7", "verify_verdict": "valid"},
+    {"turn": 2, "status": "awaiting_approval", "move": "escalate public-proof consequence", "receipt_ref": "runx:receipt:sha256:d8ea964534a047b438dd0b44ee3430b76757d82089b80b67e83e9f4f070dbe1a", "verify_verdict": "valid"},
+    {"turn": 3, "status": "advanced", "move": "record gate resolution and dispatch verifier", "receipt_ref": "runx:receipt:sha256:f4878a95993c1b5faeb2e70f20c71c1ccd22fc0d0cda1952b9d005d7e7ea9042", "verify_verdict": "valid"}
+  ],
+  "receipt_ref": "runx:receipt:sha256:f4878a95993c1b5faeb2e70f20c71c1ccd22fc0d0cda1952b9d005d7e7ea9042",
+  "observations": [
+    "Exact CLI version was runx-cli 0.7.0.",
+    "The recurring need is real: Frantic claims require repeated selection, implementation, verification, revision, and public evidence checks.",
+    "Turn 1 folded the opened mandate and dispatched only the fixed read-only researcher.",
+    "Turn 2 hit awaiting_approval because public republish or delivery during a registry outage was consequential and could not bypass hosted verification.",
+    "Turn 3 recorded resolution of that gate and dispatched only the fixed verifier within receipt-read and public-evidence scopes.",
+    "All three turn receipts verified green for digest, content address, and signature."
+  ]
+}

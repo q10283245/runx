@@ -1,0 +1,5 @@
+case: no-case-events-stop
+expected_decision: needs_more_evidence
+expected_health_status: unknown
+expected_findings: []
+expected_interventions: []

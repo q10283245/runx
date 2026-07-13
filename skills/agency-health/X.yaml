@@ -1,0 +1,79 @@
+skill: agency-health
+version: "0.1.0"
+
+catalog:
+  kind: graph
+  audience: public
+  visibility: public
+  role: canonical
+
+harness:
+  cases:
+    - name: concerning-agency-sealed
+      inputs:
+        data_source_ref: tenant://agency-ops/projection
+        store_id: agency-ops-primary
+        agency_ref: agency:renewal-runner
+        period: 7d
+        case_id: case:bounty-pipeline
+        health_baseline: {threshold_days_stuck: 2, cap_pressure_pct: 80, refusal_spike_rate: 0.2}
+      caller:
+        answers:
+          agent_task.agency-health.output:
+            decision: {status: ready, reason: Ordered case events and ledger id-stub aggregates cover the requested period.}
+            health_verdict:
+              status: degraded
+              findings:
+                - {metric: seal_rate, value: 0.75, norm: ">=0.90", assessment: below_norm, grounding: "ledger:receipt-stub:seal-7d"}
+                - {metric: stuck_case_count, value: 2, norm: "<=0", assessment: above_norm, grounding: "case:bounty-pipeline:turns:4,5"}
+                - {metric: cap_usage_pct, value: 86, norm: "<80", assessment: pressure, grounding: "case:bounty-pipeline:turn:5"}
+                - {metric: escalation_backlog, value: 1, norm: "<=0", assessment: backlog, grounding: "case:bounty-pipeline:turn:5"}
+            intervention_findings:
+              - {target_lane: policy-author, reason: Tighten stuck-turn timeout without widening authority., case_id: "case:bounty-pipeline", turn_refs: [4, 5], ledger_id_stub: "ledger:receipt-stub:seal-7d"}
+              - {target_lane: improve-skill, reason: Investigate the member behind the refusal spike., case_id: "case:bounty-pipeline", turn_refs: [3, 4], ledger_id_stub: "ledger:receipt-stub:refusal-7d"}
+      expect: {status: sealed, receipt: {schema: runx.receipt.v1}}
+
+    - name: no-case-events-stop
+      inputs:
+        data_source_ref: tenant://agency-ops/empty-projection
+        store_id: agency-ops-primary
+        agency_ref: agency:empty
+        period: 7d
+        case_id: case:no-readable-events
+        health_baseline: {threshold_days_stuck: 2, cap_pressure_pct: 80, refusal_spike_rate: 0.2}
+      caller:
+        answers:
+          agent_task.agency-health.output:
+            decision: {status: needs_more_evidence, reason: No readable case events exist for the requested agency and period.}
+            health_verdict: {status: unknown, findings: []}
+            intervention_findings: []
+      expect: {status: sealed, receipt: {schema: runx.receipt.v1}}
+
+runners:
+  agency-health:
+    default: true
+    type: graph
+    inputs:
+      data_source_ref: {type: string, required: true, description: "Bound data source for the agency case projection."}
+      store_id: {type: string, required: true, description: "Pinned data-store identity."}
+      agency_ref: {type: string, required: true, description: "Running agency identifier."}
+      period: {type: string, required: false, description: "Bounded health window."}
+      case_id: {type: string, required: false, description: "Optional agency case partition."}
+      health_baseline: {type: object, required: false, description: "Declared stuck, cap-pressure, and refusal-spike norms."}
+    graph:
+      name: agency-health
+      steps:
+        - id: assemble-health
+          run:
+            type: agent-task
+            agent: analyst
+            task: agency-health
+            outputs: {decision: object, health_verdict: object, intervention_findings: object}
+          inputs:
+            data_source_ref: "$input.data_source_ref"
+            store_id: "$input.store_id"
+            agency_ref: "$input.agency_ref"
+            period: "$input.period"
+            case_id: "$input.case_id"
+            health_baseline: "$input.health_baseline"
+          artifacts: {wrap_as: agency_health_bundle, packet: runx.agency.health.v1}

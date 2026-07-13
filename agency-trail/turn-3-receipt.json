@@ -1,0 +1,90 @@
+{
+  "schema": "runx.receipt.v1",
+  "id": "sha256:f4878a95993c1b5faeb2e70f20c71c1ccd22fc0d0cda1952b9d005d7e7ea9042",
+  "created_at": "2026-07-13T03:32:47.415Z",
+  "canonicalization": "runx.receipt.c14n.v1",
+  "issuer": {
+    "type": "hosted",
+    "kid": "renewal-agency-trail",
+    "public_key_sha256": "sha256:139e3940e64b5491722088d9a0d741628fc826e09475d341a780acde3c4b8070"
+  },
+  "signature": {
+    "alg": "Ed25519",
+    "value": "base64:osyEpD2Sl7RLoXVIDIbFPQfoFSw64Rc4ptNsUgS0xbg_XR-flvp-7ykriNsW0tnuKCVnG3mQy8VtbgixbG0tBg"
+  },
+  "digest": "sha256:1cb1c6bfb2ad2a6d5751d6110095f04f7cdf73d60e142399a7834873eb803488",
+  "idempotency": {
+    "intent_key": "sha256:agency-advance-graph-intent",
+    "trigger_fingerprint": "sha256:agency-advance-graph-trigger",
+    "content_hash": "sha256:agency-advance-graph-content"
+  },
+  "subject": {
+    "kind": "graph",
+    "ref": {
+      "type": "harness",
+      "uri": "hrn_agency-advance_graph"
+    },
+    "commitments": []
+  },
+  "authority": {
+    "actor_ref": {
+      "type": "principal",
+      "uri": "runx:principal:local_runtime"
+    },
+    "grant_refs": [],
+    "scope_refs": [],
+    "authority_proof_refs": [],
+    "attenuation": {
+      "parent_authority_ref": null,
+      "subset_proof": null
+    },
+    "terms": [],
+    "enforcement": {
+      "profile_hash": "sha256:635fdb0a7eef93911e3c6bd0b25b5e635edba32e0259133042b3a5f1fb19394e",
+      "redaction_refs": [],
+      "setup_refs": [],
+      "teardown_refs": []
+    }
+  },
+  "signals": [],
+  "decisions": [],
+  "acts": [],
+  "seal": {
+    "disposition": "closed",
+    "reason_code": "graph_closed",
+    "summary": "graph agency-advance completed",
+    "closed_at": "2026-07-13T03:32:47.415Z",
+    "last_observed_at": "2026-07-13T03:32:47.415Z",
+    "criteria": []
+  },
+  "lineage": {
+    "children": [
+      {
+        "type": "receipt",
+        "uri": "runx:receipt:sha256:d2a6facf4340e3bf48a4b573a931bce78e1e0aec77dcbf18e5d0198bd9fa003e",
+        "locator": "sha256:bc5d539674b5f43261e89eaca74f4ec0e2b3a224d109e9076b5b02f70cf6c705"
+      },
+      {
+        "type": "receipt",
+        "uri": "runx:receipt:sha256:e0611ad4518c0304a84edd138752160853f101abbec99c4195f64ef252568ad6",
+        "locator": "sha256:4e7a1b84b8d09cfd8939590480066ae1454deddef05545a0d3a8d86a54618015"
+      },
+      {
+        "type": "receipt",
+        "uri": "runx:receipt:sha256:e9f2173e53b5945f7b3ba3dc6be83d8afe45b7f0c2838cb4f6a713b9c7480930",
+        "locator": "sha256:c885bce278d1f420d8be88764632b05beb7695389f8d9219fc8dbad22ef7ccaf"
+      },
+      {
+        "type": "receipt",
+        "uri": "runx:receipt:sha256:7392f784907eecf046e9d9afd9497b50eff7debbf05553e95eca8afd8e27416d",
+        "locator": "sha256:08b87642fad597e0f8699c736d6d249c56f13fae5f5b1d39a2f3e70cef4ee1e1"
+      },
+      {
+        "type": "receipt",
+        "uri": "runx:receipt:sha256:9381ecea3fb368ec03cc5ad0e83b7c69045b583f6b14578f834f3868a45dcd0e",
+        "locator": "sha256:08a48fdacb7e89a5f2f7fdf4f79394224b479d2df6cdd20e025a32bbe1af1396"
+      }
+    ],
+    "sync": []
+  }
+}
