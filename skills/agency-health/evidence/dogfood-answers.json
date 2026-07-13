@@ -1,0 +1,22 @@
+{
+  "answers": {
+    "agent_task.agency-health.output": {
+      "decision": {
+        "status": "ready",
+        "reason": "The ordered case projection contains the opened mandate and three governed turns, and the ledger reader supplies receipt id-stubs for the same operating trail."
+      },
+      "health_verdict": {
+        "status": "degraded",
+        "findings": [
+          {"metric": "seal_rate", "value": 1.0, "norm": ">=0.90", "assessment": "healthy", "grounding": "ledger:receipt-stub:sha256:e554ace342b9f2a2fcd0430f63fc6663f7a9be3f587260e690a435e23f2e26ce"},
+          {"metric": "stuck_case_count", "value": 1, "norm": "<=0", "assessment": "above_norm", "grounding": "case:two-week-200-bounty-ops:turn:3"},
+          {"metric": "cap_usage_pct", "value": 25, "norm": "<80", "assessment": "healthy", "grounding": "case:two-week-200-bounty-ops:turns:1-3-of-12"},
+          {"metric": "escalation_backlog", "value": 0, "norm": "<=0", "assessment": "healthy", "grounding": "case:two-week-200-bounty-ops:turns:2-3"}
+        ]
+      },
+      "intervention_findings": [
+        {"target_lane": "improve-skill", "reason": "Diagnose the blocked public registry verification before the pending verifier dispatch can close.", "case_id": "case:two-week-200-bounty-ops", "turn_refs": [2, 3], "ledger_id_stub": "ledger:receipt-stub:sha256:e554ace342b9f2a2fcd0430f63fc6663f7a9be3f587260e690a435e23f2e26ce"}
+      ]
+    }
+  }
+}

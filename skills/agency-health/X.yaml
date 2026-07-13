@@ -80,9 +80,6 @@ runners:
           runner: read
           inputs:
             question: Read seal-rate and refusal-spike aggregates for this agency period; return receipt id-stubs only.
-            filter:
-              skill_ref: "$input.agency_ref"
-              time_range: "$input.period"
             proof: {verify_chain: true}
         - id: assemble-health
           run:
