@@ -1,0 +1,52 @@
+name: CSAT published package dogfood
+
+on:
+  push:
+    branches: [ci/csat-published-dogfood]
+
+permissions:
+  contents: read
+
+jobs:
+  dogfood:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/csat-recovery-skill
+
+      - name: Install RunX CLI
+        run: |
+          curl -fsSLO https://github.com/runxhq/runx/releases/download/cli-v0.7.1/runx-0.7.1-x86_64-unknown-linux-musl.tar.gz
+          tar -xzf runx-0.7.1-x86_64-unknown-linux-musl.tar.gz
+          sudo install runx-0.7.1-x86_64-unknown-linux-musl/runx /usr/local/bin/runx
+          runx --version
+
+      - name: Run published package and verify receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          private_der="$(openssl genpkey -algorithm ED25519 -outform DER | openssl base64 -A)"
+          seed="$(printf '%s' "$private_der" | openssl base64 -d -A | tail -c 32 | openssl base64 -A)"
+          public_key="$(printf '%s' "$private_der" | openssl base64 -d -A | openssl pkey -inform DER -pubout -outform DER | tail -c 32 | openssl base64 -A)"
+          export RUNX_RECEIPT_SIGN_KID=csat-recovery-v020-published-dogfood
+          export RUNX_RECEIPT_SIGN_ED25519_SEED_BASE64="$seed"
+          export RUNX_RECEIPT_SIGN_ISSUER_TYPE=hosted
+          export RUNX_DATA_SOURCES='{"data_sources":{"tenant://csat-recovery/customer-ledger":{"adapter":"data.local","resources":{"recovery_events":{"kind":"event_stream","partition_key":"aggregate_id"}}}}}'
+          mkdir -p dogfood-artifact/receipts
+          initial="$(runx skill q10283245/csat-recovery@0.2.0 csat-recovery-with-prior-fixture --registry https://api.runx.ai --input-json 'detractor_signal={"reason":"Duplicate charge","score":1,"timestamp":"2026-07-14T05:03:00Z"}' --input-json 'customer_context={"id":"customer-redacted-published","ltv":3200,"timezone":"UTC"}' --input-json 'recovery_policy={"message_templates":{"credit_apology":"csat-credit-apology-v1"},"monthly_credit_limit":5000,"plays":["apology","credit","escalate"]}' --input-json 'recovery_request={"amount_minor":1200,"counterparty":"customer-redacted-published","currency":"USD","scopes":["credit:billing-error"]}' --input-json 'charge_receipt={"amount_minor":2400,"original_receipt_ref":"runx:receipt:sha256:published-original-charge","remaining_refundable_minor":1800}' --input-json 'prior_recovery_ref="projection:customer-redacted-published:2026-07"' --input-json 'data_source_ref="tenant://csat-recovery/customer-ledger"' --input-json 'store_id="csat-recovery-published-dogfood-v020"' --input-json 'recovery_month="2026-07"' --input-json 'prior_recovery_event={"payload":{"amount_minor":800,"chosen_play":"credit","currency":"USD","original_receipt_ref":"runx:receipt:sha256:published-prior-recovery","recovery_month":"2026-07"},"type":"csat_recovery.recorded"}' --input-json 'prior_idempotency_key="csat-recovery:published:prior"' --input-json 'idempotency_key="csat-recovery:published:decision"' --skip-operator-context --receipt-dir dogfood-artifact/receipts --json || true)"
+          printf '%s\n' "$initial" > dogfood-artifact/initial.json
+          run_id="$(printf '%s' "$initial" | jq -r '.run_id')"
+          final="$(runx resume "$run_id" skills/csat-recovery/evidence/dogfood-answers.json --receipt-dir dogfood-artifact/receipts --json)"
+          printf '%s\n' "$final" > dogfood-artifact/final.json
+          receipt_id="$(printf '%s' "$final" | jq -r '.receipt_id')"
+          receipt_file="dogfood-artifact/receipts/${receipt_id/:/-}.json"
+          RUNX_RECEIPT_VERIFY_KID=csat-recovery-v020-published-dogfood RUNX_RECEIPT_VERIFY_ED25519_PUBLIC_KEY_BASE64="$public_key" runx verify --receipt "$receipt_file" --json > dogfood-artifact/verification.json
+          printf '%s\n' "$public_key" > dogfood-artifact/public-key-base64.txt
+          jq -n --arg command "runx skill q10283245/csat-recovery@0.2.0 csat-recovery-with-prior-fixture --registry https://api.runx.ai ... --json" --arg receipt_ref "runx:receipt:$receipt_id" --arg run_id "$run_id" --slurpfile final dogfood-artifact/final.json --slurpfile verification dogfood-artifact/verification.json '{command:$command,run_id:$run_id,receipt_ref:$receipt_ref,status:$final[0].status,verification:$verification[0]}' > dogfood-artifact/result.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: csat-published-dogfood
+          path: dogfood-artifact
+          retention-days: 7
